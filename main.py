@@ -198,7 +198,7 @@ def logs(x_telegram_init_data: str|None=Header(default=None)):
  u=current_user(x_telegram_init_data); 
  if not admin_for(u['telegram_id']): raise HTTPException(403,'Admin only')
  c=db(); rows=c.execute('SELECT * FROM audit_logs ORDER BY id DESC LIMIT 300').fetchall(); c.close(); return {'items':[dict(r) for r in rows]}
- @app.get("/")
+@app.get("/")
 def home():
     return FileResponse("index.html")
 
