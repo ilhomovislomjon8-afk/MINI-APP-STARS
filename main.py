@@ -33,7 +33,7 @@ def init_db():
  c.execute("INSERT OR IGNORE INTO settings(k,v) VALUES('referral_reward','3')")
  c.execute("INSERT OR IGNORE INTO settings(k,v) VALUES('free_spin_hours','24')")
  c.execute("INSERT OR IGNORE INTO settings(k,v) VALUES('min_withdrawal','5')")
- c.execute("INSERT OR IGNORE INTO tasks(id,title,description,link,reward,channel_username) VALUES('channel','Kanalga qo\'shiling','Majburiy kanalga obuna bo\'ling','#',1,'')")
+ c.execute("INSERT OR IGNORE INTO tasks(id,title,description,link,reward,channel_username) VALUES('channel','Kanalga qoshiling','Majburiy kanalga obuna boling','#',1,'')")
  for oid in OWNER_IDS: c.execute("INSERT OR IGNORE INTO admins(telegram_id,role,permissions) VALUES(?,?,?)",(oid,'Owner','[\"*\"]'))
  c.commit(); c.close()
 init_db()
