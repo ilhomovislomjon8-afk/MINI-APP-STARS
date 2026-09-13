@@ -4,6 +4,7 @@ from urllib.parse import parse_qsl
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi.responses import FileResponse
 
 DB=os.getenv('DB_PATH','./ovo_gift.db')
 BOT_TOKEN=os.getenv('BOT_TOKEN','')
@@ -33,7 +34,19 @@ def init_db():
  c.execute("INSERT OR IGNORE INTO settings(k,v) VALUES('referral_reward','3')")
  c.execute("INSERT OR IGNORE INTO settings(k,v) VALUES('free_spin_hours','24')")
  c.execute("INSERT OR IGNORE INTO settings(k,v) VALUES('min_withdrawal','5')")
- c.execute("INSERT OR IGNORE INTO tasks(id,title,description,link,reward,channel_username) VALUES('channel','Kanalga qoshiling','Majburiy kanalga obuna boling','#',1,'')")
+ c.execute(
+    """INSERT OR IGNORE INTO tasks
+       (id,title,description,link,reward,channel_username)
+       VALUES (?,?,?,?,?,?)""",
+    (
+        "channel",
+        "Kanalga qo‘shiling",
+        "Majburiy kanalga obuna bo‘ling",
+        "#",
+        1,
+        ""
+    )
+ )
  for oid in OWNER_IDS: c.execute("INSERT OR IGNORE INTO admins(telegram_id,role,permissions) VALUES(?,?,?)",(oid,'Owner','[\"*\"]'))
  c.commit(); c.close()
 init_db()
@@ -185,3 +198,16 @@ def logs(x_telegram_init_data: str|None=Header(default=None)):
  u=current_user(x_telegram_init_data); 
  if not admin_for(u['telegram_id']): raise HTTPException(403,'Admin only')
  c=db(); rows=c.execute('SELECT * FROM audit_logs ORDER BY id DESC LIMIT 300').fetchall(); c.close(); return {'items':[dict(r) for r in rows]}
+ @app.get("/")
+def home():
+    return FileResponse("index.html")
+
+
+@app.get("/style.css")
+def style():
+    return FileResponse("style.css", media_type="text/css")
+
+
+@app.get("/app.js")
+def javascript():
+    return FileResponse("app.js", media_type="application/javascript")
