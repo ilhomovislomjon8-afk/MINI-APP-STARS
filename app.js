@@ -1,4 +1,4 @@
-const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand(); const API=window.OVOZ_API||'http://localhost:8000'; let S={}; const $=x=>document.getElementById(x);
+const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand(); const API=window.OVOZ_API||'https://mini-app-stars-1.onrender.com'; let S={}; const $=x=>document.getElementById(x);
 async function api(path,opt={}){let h={'Content-Type':'application/json',...(opt.headers||{})};if(tg?.initData)h['X-Telegram-Init-Data']=tg.initData;let r=await fetch(API+path,{...opt,headers:h});let d=await r.json();if(!r.ok)throw Error(d.detail||'Xatolik');return d}
 function esc(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 async function init(){try{S=await api('/api/me');$('user').textContent=S.user.first_name||'Telegram User';$('stars').textContent=S.stars;home()}catch(e){$('user').textContent='Demo / Backendni ulang';home();}setTimeout(()=>{$('splash').classList.add('hidden');$('app').classList.remove('hidden')},900)}
