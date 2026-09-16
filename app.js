@@ -1,7 +1,31 @@
 const tg=window.Telegram?.WebApp; tg?.ready(); tg?.expand(); const API=window.OVOZ_API||'https://mini-app-stars-1.onrender.com'; let S={}; const $=x=>document.getElementById(x);
 async function api(path,opt={}){let h={'Content-Type':'application/json',...(opt.headers||{})};if(tg?.initData)h['X-Telegram-Init-Data']=tg.initData;let r=await fetch(API+path,{...opt,headers:h});let d=await r.json();if(!r.ok)throw Error(d.detail||'Xatolik');return d}
 function esc(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-async function init(){try{S=await api('/api/me');$('user').textContent=S.user.first_name||'Telegram User';$('stars').textContent=S.stars;home()}catch(e){$('user').textContent='Demo / Backendni ulang';home();}setTimeout(()=>{$('splash').classList.add('hidden');$('app').classList.remove('hidden')},900)}
+async function init(){
+  try{
+    S=await api('/api/me');
+    $('user').textContent=S.user.first_name||'Telegram User';
+    $('stars').textContent=S.stars;
+  }catch(e){
+    S={
+      stars:0,
+      user:{
+        first_name:'Telegram User'
+      },
+      referrals:0,
+      rank:'-'
+    };
+    $('user').textContent='Telegram User';
+    $('stars').textContent='0';
+  }
+
+  home();
+
+  setTimeout(()=>{
+    $('splash').classList.add('hidden');
+    $('app').classList.remove('hidden');
+  },900);
+}
 function shell(html){$('content').innerHTML=html}
 function home(){shell(`<div class="card hero"><div class="muted">Sizning balansingiz</div><div class="big">⭐ ${S.stars||0}</div><button class="primary" onclick="spin()">✨ BEPUL AYLANtirish</button><p class="muted">Har 24 soatda 1 marta. Qolgan vaqt: ${S.freeSpinAvailable?'tayyor':'24 soatlik limit'}</p></div><div class="card"><h3>Tezkor</h3><div class="row"><span>👥 Referral</span><button onclick="page('ref')">Ochish</button></div><div class="row"><span>📋 Vazifalar</span><button onclick="page('tasks')">Ochish</button></div><div class="row"><span>🏆 TOP-20</span><button onclick="ranking()">Ko‘rish</button></div></div>`)}
 async function spin(){try{let d=await api('/api/spin/free',{method:'POST'});S.stars+=d.reward;$('stars').textContent=S.stars;modal('🎉 TABRIKLAYMIZ!',`Siz ${d.reward} ⭐ yutdingiz!`)}catch(e){alert(e.message)}}
